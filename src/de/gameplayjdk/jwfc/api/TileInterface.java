@@ -1,4 +1,4 @@
-package de.gameplayjdk.jwfc.test;
+package de.gameplayjdk.jwfc.api;
 
 public interface TileInterface {
 

@@ -1,4 +1,4 @@
-package de.gameplayjdk.jwfc.test;
+package de.gameplayjdk.jwfc.api;
 
 import de.gameplayjdk.jwfc.Model;
 
@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.IntPredicate;
 
-public class TileMap {
+public class TileMapGenerator {
 
     private static final int[] DIRECTION_X = {
             -1,
@@ -26,25 +26,39 @@ public class TileMap {
     private final int width;
     private final int height;
 
-    private final TileInterface[] tileMap;
+    private TileInterface[] tileMap;
 
     private TileInterface[] tileArray;
     private double[] tileWeight;
 
     private int[][][] wavePropagate;
 
-    public TileMap(int width, int height, TileInterface[] tileMap) {
+    public TileMapGenerator(int width, int height) {
         this.width = width;
         this.height = height;
+    }
+
+    public TileMapGenerator(int width, int height, TileInterface[] tileMap) {
+        this(width, height);
 
         this.tileMap = tileMap;
     }
 
     public void analyze() {
+        if (this.width * this.height != this.tileMap.length) {
+            throw new IllegalArgumentException("The array length does not match the preset width and height!");
+        }
+
         this.createTileArray();
         this.createTileWeight();
 
         this.createWavePropagate();
+    }
+
+    public void analyze(TileInterface[] tileMap) {
+        this.tileMap = tileMap;
+
+        this.analyze();
     }
 
     public TileInterface[] generate(int width, int height) {
@@ -116,8 +130,8 @@ public class TileMap {
         for (int neighbor = 0; neighbor < wavePropagate.length; neighbor++) {
             for (int mapX = 0; mapX < this.width; mapX++) {
                 for (int mapY = 0; mapY < this.height; mapY++) {
-                    int mapXNext = mapX + TileMap.DIRECTION_X[neighbor];
-                    int mapYNext = mapY + TileMap.DIRECTION_Y[neighbor];
+                    int mapXNext = mapX + TileMapGenerator.DIRECTION_X[neighbor];
+                    int mapYNext = mapY + TileMapGenerator.DIRECTION_Y[neighbor];
 
                     if (mapXNext < 0 || mapYNext < 0 || mapXNext >= this.width || mapYNext >= this.height) {
                         continue;
