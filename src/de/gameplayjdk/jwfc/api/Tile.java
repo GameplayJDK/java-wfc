@@ -16,8 +16,6 @@ public class Tile implements TileInterface {
     @Override
     public boolean equals(Object object) {
         if (object instanceof Tile) {
-            //System.out.println("equals()");
-
             return ((Tile) object).getId() == this.getId();
         }
 

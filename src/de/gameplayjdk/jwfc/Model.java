@@ -1,6 +1,5 @@
 package de.gameplayjdk.jwfc;
 
-import java.util.Arrays;
 import java.util.Random;
 
 public class Model {
@@ -45,8 +44,8 @@ public class Model {
     // The compatibility of each wave map field by tile to the neighboring wave map field.
     private int[][][] compatible;
 
-    // int[4][count][N]; N = 0 < N < count; N = "set of possible tile".
-    // The possible tile by direction and current tile. It provides the following data: What tiles appear next to what tiles, on which sides.
+    // The possible tile by direction and current tile. It provides the following data: What tiles appear next to what
+    // tiles, on which sides. E.g.: int[4][this.count][N]; N = 0 < N < count; N = "set of possible tile".
     private int[][][] wavePropagate;
 
     // The weight of each tile.
@@ -124,6 +123,8 @@ public class Model {
 
         this.stack = new int[this.wave.length * this.count][2];
         this.stackSize = 0;
+
+        //this.periodic = false;
     }
 
     private boolean observe(Random random) {
@@ -136,7 +137,8 @@ public class Model {
 
         // Iterate the wave map fields.
         for (int field = 0; field < this.wave.length; field++) {
-            // Skip, if no longer inside the map boundary. The arguments resemble the x and y value inside of the wave map for the current field.
+            // Skip, if no longer inside the map boundary. The arguments resemble the x and y value inside of the wave
+            // map for the current field.
             if (this.isOutOfBoundary(field % this.width, (field - (field % this.width)) / this.width)) {
                 continue;
             }
@@ -144,7 +146,8 @@ public class Model {
             // The amount of available tile options left for the current wave map field.
             int amount = this.sumOne[field];
 
-            // If there is a wave map field without any possible options left, the generation has failed. Thus break early by returning false.
+            // If there is a wave map field without any possible options left, the generation has failed. Thus break
+            // early by returning false.
             if (0 == amount) {
                 return false;
             }
@@ -167,7 +170,8 @@ public class Model {
             }
         }
 
-        // If there was no entropy value below the initial minimal threshold, the observation was successful. Thus save the observed wave and return true.
+        // If there was no entropy value below the initial minimal threshold, the observation was successful. Thus save
+        // the observed wave and return true.
         if (-1 == minimumFieldIndex) {
             // Initialize the observed wave map.
             this.waveObserve = new int[this.wave.length];
@@ -192,7 +196,8 @@ public class Model {
         // Else, create a new array with its size based on the tile count.
         double[] waveFieldWeight = new double[this.count];
 
-        // Go though all available tiles for the element with the lowest entropy value below the minimum threshold and copy their tile weight.
+        // Go though all available tiles for the element with the lowest entropy value below the minimum threshold and
+        // copy their tile weight.
         for (int tile = 0; tile < this.count; tile++) {
             if (this.wave[minimumFieldIndex][tile]) {
                 waveFieldWeight[tile] = this.weight[tile];
@@ -201,10 +206,12 @@ public class Model {
             }
         }
 
-        // Get the index of the first element of the array that is greater than the supplied random value or the first element if there is no one.
+        // Get the index of the first element of the array that is greater than the supplied random value or the first
+        // element if there is no one.
         int index = Helper.getNextIndexCloseToDouble(waveFieldWeight, random.nextDouble());
 
-        // Get a reference the wave map field with the lowest entropy value below the minimum threshold, negotiated before.
+        // Get a reference the wave map field with the lowest entropy value below the minimum threshold, negotiated
+        // before.
         boolean[] waveField = this.wave[minimumFieldIndex];
 
         // Go through all tiles for the selected wave map field,
@@ -214,12 +221,14 @@ public class Model {
             //  or the tile has a different index than the previously selected one and is not yet banned
             if ((tile == index) != waveField[tile]) {
                 // And ban it for that wave map field.
-                // In other words, ban every tile but the one with greater weight than the random probability which is not yet banned.
+                // In other words, ban every tile but the one with greater weight than the random probability which is
+                // not yet banned.
                 this.ban(minimumFieldIndex, tile);
             }
         }
 
-        // If true is returned, check in run for this.waveObserve being null to distinguish between the two return points of it.
+        // If true is returned, check in run for this.waveObserve being null to distinguish between the two return
+        // points of it.
         return true;
     }
 
@@ -283,7 +292,7 @@ public class Model {
     private void propagate() {
         // Loop until the stack size is zero.
         while (0 < this.stackSize) {
-            // Get the ban information from the stack. The int pair represents the wave map field and the banned tile
+            // Get the ban information from the stack. The int pair represents the wave map field and the banned tile.
             int field = this.stack[this.stackSize - 1][0];
             int tile = this.stack[this.stackSize - 1][1];
             this.stackSize--;
@@ -322,9 +331,11 @@ public class Model {
                 // Calculate the wave map field index of the neighbor.
                 int fieldNeighbor = neighborX + (neighborY * this.width);
 
-                // Compatibility in the direction (of the neighboring field) for the banned tile. The dimension now only contains the tiles possible for the direction (of the neighboring field) of the banned tile.
+                // Compatibility in the direction (of the neighboring field) for the banned tile. The dimension now only
+                // contains the tiles possible for the direction (of the neighboring field) of the banned tile.
                 int[] propagate = this.wavePropagate[neighbor][tile];
-                // Get the compatibility of the neighboring wave map field by tile to the neighboring wave map field. The dimension now only contains the compatibility of tiles to the neighbors.
+                // Get the compatibility of the neighboring wave map field by tile to the neighboring wave map field.
+                // The dimension now only contains the compatibility of tiles to the neighbors.
                 int[][] compatible = this.compatible[fieldNeighbor];
 
                 // Go through the possible tiles in the direction (of the neighboring field) for the banned tile.
@@ -358,7 +369,8 @@ public class Model {
 
                 // And finally go through the compatibility information for every wave map field by tile,
                 for (int neighbor = 0; neighbor < 4; neighbor++) {
-                    // To do... what? This creates the compatibility information from the wave propagate. It reverses the information from wave propagate.
+                    // To do... what? This creates the compatibility information from the wave propagate. It reverses
+                    // the information from wave propagate.
                     this.compatible[field][tile][neighbor] = this.wavePropagate[Model.OPPOSITE[neighbor]][tile].length;
                 }
             }

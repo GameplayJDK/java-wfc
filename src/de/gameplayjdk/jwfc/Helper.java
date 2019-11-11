@@ -8,7 +8,8 @@ import java.util.stream.IntStream;
 public final class Helper {
 
     /**
-     * Find the index of the element which is the first one greater than the given value.
+     * Find the index of the element which is the first one greater than the given value after accumulation of the
+     * previous values.
      *
      * @param array
      * @param random

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.IntPredicate;
 
-public class TileMapGenerator {
+public class TileMapGenerator implements TileMapGeneratorInterface {
 
     private static final int[] DIRECTION_X = {
             -1,
@@ -44,53 +44,69 @@ public class TileMapGenerator {
         this.tileMap = tileMap;
     }
 
-    public void analyze() {
+    private void analyze() {
+        // Check whether the width and height match the tilemap length and throw an exception if that is not the case.
         if (this.width * this.height != this.tileMap.length) {
             throw new IllegalArgumentException("The array length does not match the preset width and height!");
         }
 
-        this.createTileArray();
-        this.createTileWeight();
+        // Set up a unique tile array.
+        this.tileArray = this.createTileArray();
+        // Calculate the weight of each tile.
+        this.tileWeight = this.createTileWeight();
 
-        this.createWavePropagate();
+        // Generate a wave propagate.
+        this.wavePropagate = this.createWavePropagate();
     }
 
     public void analyze(TileInterface[] tileMap) {
+        // Set the input tilemap.
         this.tileMap = tileMap;
 
+        // Call the internal analyze method to do the actual analysis.
         this.analyze();
     }
 
     public TileInterface[] generate(int width, int height) {
+        // Shortcut method for calling generate() with periodic set to false.
         return this.generate(width, height, false);
     }
 
     public TileInterface[] generate(int width, int height, boolean periodic) {
+        // Generate a random seed.
         Random random = new Random();
         long seed = random.nextLong();
 
+        // Create and setup a new model with the input width and height
         Model model = new Model(width, height);
         model.setup(this.tileArray.length, this.tileWeight, this.wavePropagate, periodic);
 
+        // Run the model using the generated seed and with limit set to zero, which basically means without limit.
         if (model.run(seed, 0)) {
+            // On success, retrieve the observed wave map.
             int[] result = model.getWaveObserve();
 
+            // Then convert it from an integer array to an object array.
             TileInterface[] tileMap = new TileInterface[result.length];
 
             for (int index = 0; index < result.length; index++) {
                 int id = result[index];
                 id = this.getExternalTileId(id);
 
+                // Set the tile at that index based on the integer value from the output. Notice, that some objects are
+                // in the array more than once, as they are all taken from the previously created distinct object array.
                 tileMap[index] = this.tileArray[id];
             }
 
+            // Return the generated map.
             return tileMap;
         }
 
+        // On failure, return null.
         return null;
     }
 
-    private void createTileArray() {
+    private TileInterface[] createTileArray() {
         List<TileInterface> tileList = new ArrayList<TileInterface>();
 
         for (TileInterface tile : this.tileMap) {
@@ -103,30 +119,31 @@ public class TileMapGenerator {
 
         TileInterface[] tileArray = new TileInterface[tileList.size()];
 
-        this.tileArray = tileList.toArray(tileArray);
+        return tileList.toArray(tileArray);
     }
 
-    private void createTileWeight() {
+    private double[] createTileWeight() {
         double[] tileWeight = new double[this.tileArray.length];
 
         for (int index = 0; index < this.tileArray.length; index++) {
             tileWeight[index]++;
         }
 
-        this.tileWeight = tileWeight;
+        return tileWeight;
     }
 
-    private void createWavePropagate() {
+    private int[][][] createWavePropagate() {
         int[][][] wavePropagate = new int[4][this.tileArray.length][this.tileArray.length];
 
-        // Fill with -1, which means no id. The id can normally never be negative, as it should resemble the index of a tile.
+        // Fill the array with -1, which means no id. The id can normally never be negative, as it should resemble the
+        // index of a tile.
         for (int[][] wavePropagateTile : wavePropagate) {
             for (int[] wavePropagateTileAllow : wavePropagateTile) {
                 Arrays.fill(wavePropagateTileAllow, -1);
             }
         }
 
-        // Find the neighboring tile of the current tile and add that to the whitelist.
+        // Find the neighboring tile of the current tile and add that to the whitelist for each tile and neighbor.
         for (int neighbor = 0; neighbor < wavePropagate.length; neighbor++) {
             for (int mapX = 0; mapX < this.width; mapX++) {
                 for (int mapY = 0; mapY < this.height; mapY++) {
@@ -145,7 +162,7 @@ public class TileMapGenerator {
             }
         }
 
-        // Remove every id which that is negative.
+        // Remove every id that is negative.
         for (int neighbor = 0; neighbor < wavePropagate.length; neighbor++) {
             for (int tile = 0; tile < wavePropagate[neighbor].length; tile++) {
                 wavePropagate[neighbor][tile] = Arrays.stream(wavePropagate[neighbor][tile])
@@ -159,7 +176,7 @@ public class TileMapGenerator {
             }
         }
 
-        this.wavePropagate = wavePropagate;
+        return wavePropagate;
     }
 
     private int getInternalTileIdAtPosition(int mapX, int mapY) {

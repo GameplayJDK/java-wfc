@@ -2,13 +2,13 @@ package de.gameplayjdk.jwfc.api;
 
 public class TileMapAdapter<T> {
 
-    private final TileMapGenerator tileMapGenerator;
+    private final TileMapGeneratorInterface tileMapGenerator;
 
     private final TileMapAdapter.TileAdapter<T> tileAdapter;
 
     private TileInterface[] tileMap;
 
-    public TileMapAdapter(TileMapGenerator tileMapGenerator, TileAdapter<T> tileAdapter) {
+    public TileMapAdapter(TileMapGeneratorInterface tileMapGenerator, TileAdapter<T> tileAdapter) {
         this.tileMapGenerator = tileMapGenerator;
         this.tileAdapter = tileAdapter;
     }
@@ -22,9 +22,7 @@ public class TileMapAdapter<T> {
     }
 
     public TileMapAdapter<T> generate(int width, int height) {
-        this.tileMap = this.tileMapGenerator.generate(0, 0);
-
-        return this;
+        return this.generate(width, height, false);
     }
 
     public TileMapAdapter<T> generate(int width, int height, boolean periodic) {

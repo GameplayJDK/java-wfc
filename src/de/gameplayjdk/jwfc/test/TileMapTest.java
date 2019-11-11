@@ -7,7 +7,6 @@ import de.gameplayjdk.jwfc.api.TileMapGenerator;
 
 import java.util.Arrays;
 import java.util.function.ToIntFunction;
-import java.util.stream.Stream;
 
 public class TileMapTest implements TileMapAdapter.TileAdapter<TileWithIdAndName> {
 
@@ -20,9 +19,6 @@ public class TileMapTest implements TileMapAdapter.TileAdapter<TileWithIdAndName
     private static final int TILE_MAP_WIDTH = 5;
     private static final int TILE_MAP_HEIGHT = 5;
 
-    private static final int TILE_MAP_WIDTH_NEW = 10;
-    private static final int TILE_MAP_HEIGHT_NEW = 10;
-
     private static final int[] TILE_MAP = {
             0, 0, 0, 0, 0,
             0, 1, 1, 1, 0,
@@ -30,6 +26,9 @@ public class TileMapTest implements TileMapAdapter.TileAdapter<TileWithIdAndName
             0, 1, 1, 1, 0,
             0, 0, 0, 0, 0,
     };
+
+    private static final int TILE_MAP_WIDTH_NEW = 10;
+    private static final int TILE_MAP_HEIGHT_NEW = 10;
 
     private final TileMapAdapter<TileWithIdAndName> tileMapAdapter;
 
