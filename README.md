@@ -43,3 +43,5 @@ java -jar out/artifacts/java_wfc_jar/java-wfc.jar
 0  1  1  1  1  1  1  1  1  0
 
 ```
+
+You can find the original algorithm [here](https://github.com/mxgmn/WaveFunctionCollapse) (written in C#).
