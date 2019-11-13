@@ -1,6 +1,6 @@
 # jwfc (java-wfc)
 
-An abstract java implementation of the wafe function collapse (wfc) algorithm.
+An abstract java implementation of the wave function collapse (wfc) algorithm.
 
 It is specifically designed with the simple tiled version of the algorithm in mind. 
 
