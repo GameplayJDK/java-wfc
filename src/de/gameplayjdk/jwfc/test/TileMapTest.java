@@ -117,12 +117,7 @@ public class TileMapTest implements TileMapAdapter.TileAdapter<TileWithIdAndName
     @Override
     public TileWithIdAndName[] fromTileMap(TileInterface[] tileArray) {
         int[] integerArray = Arrays.stream(tileArray)
-                .mapToInt(new ToIntFunction<TileInterface>() {
-                    @Override
-                    public int applyAsInt(TileInterface value) {
-                        return value.getId();
-                    }
-                })
+                .mapToInt(TileInterface::getId)
                 .toArray();
 
         return TileMapTest.createTileArrayFromIntegerArray(TileMapTest.TILE_MAP_WIDTH_NEW, TileMapTest.TILE_MAP_HEIGHT_NEW, integerArray);

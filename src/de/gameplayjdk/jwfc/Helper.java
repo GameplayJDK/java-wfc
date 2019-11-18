@@ -38,12 +38,7 @@ public final class Helper {
                 .sum();
 
         final double[] arrayFinal = Arrays.stream(array)
-                .map(new DoubleUnaryOperator() {
-                    @Override
-                    public double applyAsDouble(double operand) {
-                        return operand / sum;
-                    }
-                })
+                .map(operand -> operand / sum)
                 .toArray();
 
         return IntStream.range(0, array.length)

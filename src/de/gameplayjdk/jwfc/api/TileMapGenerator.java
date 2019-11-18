@@ -184,12 +184,7 @@ public class TileMapGenerator implements TileMapGeneratorInterface {
         for (int neighbor = 0; neighbor < wavePropagate.length; neighbor++) {
             for (int tile = 0; tile < wavePropagate[neighbor].length; tile++) {
                 wavePropagate[neighbor][tile] = Arrays.stream(wavePropagate[neighbor][tile])
-                        .filter(new IntPredicate() {
-                            @Override
-                            public boolean test(int value) {
-                                return value > -1;
-                            }
-                        })
+                        .filter(value -> value > -1)
                         .toArray();
             }
         }
