@@ -143,7 +143,7 @@ public class TileMapGenerator implements TileMapGeneratorInterface {
     private double[] createTileWeight() {
         double[] tileWeight = new double[this.tileArray.length];
 
-        for (int index = 0; index < this.tileArray.length; index++) {
+        for (int index = 0; index < this.tileMap.length; index++) {
             tileWeight[index]++;
         }
 
